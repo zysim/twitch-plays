@@ -5,14 +5,19 @@ import time
 class Game:
 
     keymap = {
-        'up': 0x30,
-        'down': 0x31,
-        'left': 0x32,
-        'right': 0x33,
-        'a': 0x34,
-        'b': 0x35,
-        'start': 0x36,
-        'select': 0x37
+        'up': 0x57, // W
+        'down': 0x53, // S
+        'left': 0x41, // A
+        'right': 0x44, // D
+        'jump': 0x4B, // K
+        'hit': 0x4A, // J
+        'arrow': 0x4C, // L
+        'roll': 0x55, // U
+        'item': 0x49, // I
+        'switch': 0x4F, // O
+        'map': 0x0A, // Tab
+        'menu': 0x0F, // Shift on (might have to fix this)
+        // TODO: rj command
     }
 
     def get_valid_buttons(self):
