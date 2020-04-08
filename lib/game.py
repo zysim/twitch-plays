@@ -2,23 +2,31 @@ import win32api
 import win32con
 import time
 
+# 🍁
+
 class Game:
 
     keymap = {
-        'up': 0x57, // W
-        'down': 0x53, // S
-        'left': 0x41, // A
-        'right': 0x44, // D
-        'jump': 0x4B, // K
-        'hit': 0x4A, // J
-        'whack': 0x4A, // J
-        'arrow': 0x4C, // L
-        'roll': 0x55, // U
-        'item': 0x49, // I
-        'switch': 0x4F, // O
-        'map': 0x0A, // Tab
-        'menu': 0x0F, // Shift on (might have to fix this)
-        // TODO: rj command
+        # Directions
+        'up': win32con.VK_UP,
+        'down': win32con.VK_DOWN,
+        'left': win32con.VK_LEFT,
+        'right': win32con.VK_RIGHT,
+        
+        # Actions
+        'item': 0x57, # W
+        'hit': 0x53, # S
+        'whack': 0x53, # S (alias)
+        'jump': 0x41, # A
+        'bow': 0x44, # D
+        'roll': 0x51, # Q
+        'switch': 0x45, # E
+        
+        'map': win32con.VK_TAB,
+        'menu': win32con.VK_SHIFT,
+        
+        # 👸
+        'ry': [0x41, 0x51], # [A, Q]
     }
 
     def get_valid_buttons(self):
@@ -30,7 +38,9 @@ class Game:
     def button_to_key(self, button):
         return self.keymap[button]
 
-    def push_button(self, button):
-        win32api.keybd_event(self.button_to_key(button), 0, 0, 0)
+    def push_button(self, buttons):
+        for button in buttons:
+            win32api.keybd_event(self.button_to_key(button), 0, 0, 0)
         time.sleep(.15)
-        win32api.keybd_event(self.button_to_key(button), 0, win32con.KEYEVENTF_KEYUP, 0)
+        for button in buttons:
+            win32api.keybd_event(self.button_to_key(button), 0, win32con.KEYEVENTF_KEYUP, 0)
