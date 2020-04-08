@@ -11,6 +11,7 @@ class Game:
         'right': 0x44, // D
         'jump': 0x4B, // K
         'hit': 0x4A, // J
+        'whack': 0x4A, // J
         'arrow': 0x4C, // L
         'roll': 0x55, // U
         'item': 0x49, // I
