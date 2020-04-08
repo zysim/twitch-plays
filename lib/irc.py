@@ -11,6 +11,9 @@ class Irc:
     def __init__(self, config):
         self.config = config
         self.set_socket_object()
+    
+    def _send_message(self, message: str):
+        self.sock.send(message.encode('utf8'))
 
     def set_socket_object(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,9 +40,9 @@ class Irc:
 
         sock.settimeout(None)
 
-        sock.send('USER %s\r\n' % username)
-        sock.send('PASS %s\r\n' % password)
-        sock.send('NICK %s\r\n' % username)
+        self._send_message('USER %s\r\n' % username)
+        self._send_message('PASS %s\r\n' % password)
+        self._send_message('NICK %s\r\n' % username)
 
         if not self.check_login_status(self.recv()):
             pp('Invalid login.', 'error')
@@ -47,15 +50,15 @@ class Irc:
         else:
             pp('Login successful!')
 
-        sock.send('JOIN #%s\r\n' % username)
+        self._send_message('JOIN #%s\r\n' % username)
         pp('Joined #%s' % username)
 
     def ping(self, data):
         if data.startswith('PING'):
-            self.sock.send(data.replace('PING', 'PONG'))
+            self._send_message(data.replace('PING', 'PONG'))
 
     def recv(self, amount=1024):
-        return self.sock.recv(amount)
+        return self.sock.recv(amount).decode()
 
     def recv_messages(self, amount=1024):
         data = self.recv(amount)
@@ -79,5 +82,5 @@ class Irc:
         return {
             'channel': re.findall(r'^:.+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+.+ PRIVMSG (.*?) :', data)[0],
             'username': re.findall(r'^:([a-zA-Z0-9_]+)\!', data)[0],
-            'message': re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', data)[0].decode('utf8')
+            'message': re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', data)[0]
         }
