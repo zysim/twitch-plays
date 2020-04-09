@@ -1,46 +1,32 @@
 import win32api
 import win32con
 import time
+import keymap
 
 # 🍁
 
+DEFAULT_DURATION = .15
+
 class Game:
 
-    keymap = {
-        # Directions
-        'up': win32con.VK_UP,
-        'down': win32con.VK_DOWN,
-        'left': win32con.VK_LEFT,
-        'right': win32con.VK_RIGHT,
-        
-        # Actions
-        'item': 0x57, # W
-        'hit': 0x53, # S
-        'whack': 0x53, # S (alias)
-        'jump': 0x41, # A
-        'bow': 0x44, # D
-        'roll': 0x51, # Q
-        'switch': 0x45, # E
-        
-        'map': win32con.VK_TAB,
-        'menu': win32con.VK_SHIFT,
-        
-        # 👸
-        'ry': [0x41, 0x51], # [A, Q]
-    }
-
     def get_valid_buttons(self):
-        return [button for button in self.keymap.keys()]
+        return [button for button in keymap.keys()]
 
     def is_valid_button(self, button):
-        return button in self.keymap.keys()
+        return button in keymap.keys()
 
     def button_to_key(self, button):
-        return self.keymap[button]
+        return keymap[button]
 
-    def push_button(self, buttons):
-        for button in buttons:
-            win32api.keybd_event(self.button_to_key(button), 0, 0, 0)
-        time.sleep(.15)
-        for button in buttons:
-            win32api.keybd_event(self.button_to_key(button), 0, win32con.KEYEVENTF_KEYUP, 0)
+    def push_button(self, button):
+        self._handle(button, 0)
+        time.sleep(button['duration'] if 'duration' in button else DEFAULT_DURATION)
+        self._handle(button, win32con.KEYEVENTF_KEYUP)
+
+    def _handle(self, button, event):
+        if isinstance(button['key'], list):
+            for b in button['key']:
+                win32api.keybd_event(self.button_to_key(b), 0, event, 0)
+        else:
+            win32api.keybd_event(self.button_to_key(button['key']), 0, event, 0)
+
